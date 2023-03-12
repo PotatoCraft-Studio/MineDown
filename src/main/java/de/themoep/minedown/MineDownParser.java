@@ -379,7 +379,7 @@ public class MineDownParser {
         List<ChatColor> applicableColors;
         long valueCodepointLength = value.length();
         // If the value is empty don't add anything
-        if (valueCodepointLength == 0) {
+        if (!enabledOptions.contains(Option.APPEND_COLORS_TO_EMPTY_STRING)&&valueCodepointLength == 0) {
             return;
         }
         if (rainbowPhase != null) {
@@ -1059,7 +1059,11 @@ public class MineDownParser {
         /**
          * Whether or not to translate legacy color codes (Default: true)
          */
-        LEGACY_COLORS
+        LEGACY_COLORS,
+        /**
+         * Whether or not to append the color code to empty string (Default: false)
+         */
+        APPEND_COLORS_TO_EMPTY_STRING
     }
 
     /**
