@@ -36,6 +36,7 @@ import net.md_5.bungee.api.chat.hover.content.Text;
 import java.awt.Color;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -373,7 +374,18 @@ public class MineDownParser {
             }
         }
     }
-
+    //Credit to ChatGPT
+    public static int[] codePoints(StringBuilder sb) {
+        int length = sb.length();
+        int[] codePoints = new int[length];
+        int i = 0;
+        for (int offset = 0; offset < length; ) {
+            int codePoint = sb.codePointAt(offset);
+            codePoints[i++] = codePoint;
+            offset += Character.charCount(codePoint);
+        }
+        return Arrays.copyOf(codePoints, i);
+    }
     private void appendValue() {
         ComponentBuilder builder;
         List<ChatColor> applicableColors;
@@ -384,11 +396,11 @@ public class MineDownParser {
         }
         if (rainbowPhase != null) {
             // Rainbow colors
-            valueCodepointLength = value.codePoints().count();
+            valueCodepointLength = codePoints(value).length;
             applicableColors = Util.createRainbow(valueCodepointLength, rainbowPhase, HAS_RGB_SUPPORT);
         } else if (colors != null) {
             if (colors.size() > 1) {
-                valueCodepointLength = value.codePoints().count();
+                valueCodepointLength = codePoints(value).length;
                 applicableColors = Util.createGradient(
                         valueCodepointLength,
                         colors.entrySet().stream().filter(Map.Entry::getValue).map(Map.Entry::getKey).collect(Collectors.toList()),
@@ -448,9 +460,8 @@ public class MineDownParser {
             StringBuilder sb = new StringBuilder();
             int colorIndex = 0;
             int steps = 0;
-
-            for (PrimitiveIterator.OfInt it = value.codePoints().iterator(); it.hasNext(); ) {
-                sb.appendCodePoint(it.next());
+            for (int codePoint : codePoints(value)) {
+                sb.appendCodePoint(codePoint);
                 if (++steps == stepLength) {
                     steps = 0;
                     TextComponent c = new TextComponent(sb.toString());
